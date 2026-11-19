@@ -1,0 +1,2 @@
+opencem-v1.0.0-support.zip: OK
+opencem-v1.0.0.sqlite.zst: OK

@@ -1,0 +1,291 @@
+
+==============================================================================
+1. INVENTARIO DE TABLAS
+==============================================================================
+Tablas: analog_measurements, context, fault_history, settings, specs, statistics, status, totals
+- analog_measurements    filas= 2,989,759  columnas= 44  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+- context                filas=    25,178  columnas=  5  recorded 2024-07-27 10:00:00 -> 2026-07-14 10:59:48; start>= 2024-04-30 16:00:00; end<= 2026-07-22 15:59:59
+- fault_history          filas= 2,129,517  columnas= 66  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+- settings               filas= 2,284,775  columnas=176  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+- specs                  filas= 1,333,174  columnas= 16  read_ts 2025-07-12 13:31:35 -> 2026-02-02 18:40:30
+- statistics             filas= 2,285,904  columnas= 31  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+- status                 filas= 2,240,052  columnas= 20  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+- totals                 filas= 2,279,918  columnas= 21  read_ts 2025-07-12 13:31:35 -> 2026-07-13 05:13:53
+
+Cargando analog_measurements (9 columnas) en memoria...
+
+==============================================================================
+2. COBERTURA Y CADENCIA (mes UTC)
+==============================================================================
+Filas analog_measurements                      medido=   2,989,759  ref=   2,989,759  OK
+Filas inversor 1                               medido=   1,610,276  ref=   1,610,276  OK
+Filas inversor 2                               medido=   1,379,483  ref=   1,379,483  OK
+
+Filas por mes e inversor:
+inverter       1       2
+mes_utc                 
+2025-07     4327    4004
+2025-08     3632    3632
+2025-09    21209   21010
+2025-10    75364   70942
+2025-11   164953  118891
+2025-12   211902  211902
+2026-01   211989  211989
+2026-02   190934  190934
+2026-03   211369  211369
+2026-04   214573  204655
+2026-05   102566  102523
+2026-06    98576   27632
+2026-07    98882       0
+
+Cadencia: mediana de diferencia entre lecturas consecutivas (s):
+inverter      1      2
+mes_utc               
+2025-07   366.0  366.1
+2025-08   110.6  110.6
+2025-09   110.7  110.7
+2025-10    12.6   12.6
+2025-11    12.6   12.6
+2025-12    12.6   12.6
+2026-01    12.6   12.6
+2026-02    12.6   12.6
+2026-03    12.6   12.6
+2026-04    12.6   12.6
+2026-05    12.6   12.6
+2026-06    10.7   59.7
+2026-07    10.7    NaN
+
+Último timestamp con alguna variable clave no nula, por inversor:
+  inversor 1: 2026-07-13 05:13:53 UTC
+  inversor 2: 2026-06-19 04:36:23 UTC
+
+==============================================================================
+3. HUECOS DE TELEMETRÍA (> 1 h entre lecturas consecutivas)
+==============================================================================
+Huecos > 1 h inversor 1                        medido=          16  ref=          16  OK
+  Horas totales en huecos > 1 h: 938 h
+         inicio_utc             fin_utc  horas
+2025-08-03 04:58:15 2025-08-29 08:29:25  627.5
+2025-11-15 19:48:37 2025-11-21 07:28:18  131.7
+2025-09-22 08:45:23 2025-09-25 09:22:00   72.6
+2025-07-27 08:25:21 2025-07-28 05:37:36   21.2
+2026-06-16 11:29:17 2026-06-17 00:56:04   13.4
+2026-06-14 13:00:15 2026-06-15 01:34:47   12.6
+2026-06-18 13:39:24 2026-06-19 00:25:43   10.8
+2025-07-13 17:18:57 2025-07-14 04:02:28   10.7
+Huecos > 1 h inversor 2                        medido=          15  ref=          15  OK
+  Horas totales en huecos > 1 h: 1,093 h
+         inicio_utc             fin_utc  horas
+2025-08-03 04:58:15 2025-08-29 08:29:25  627.5
+2025-11-08 22:56:07 2025-11-21 07:28:18  296.5
+2025-09-22 08:45:23 2025-09-25 09:22:00   72.6
+2025-07-27 08:25:21 2025-07-28 05:37:36   21.2
+2026-06-16 11:29:17 2026-06-17 00:56:04   13.4
+2026-06-14 13:00:15 2026-06-15 01:34:47   12.6
+2026-06-18 13:39:24 2026-06-19 00:25:43   10.8
+2026-06-15 21:58:33 2026-06-16 08:11:10   10.2
+
+Huecos > 1 día (suma de ambos inversores): 6 (ref. 6 con ambos inversores contados por separado)
+
+==============================================================================
+4. CALIDAD DE LECTURAS
+==============================================================================
+Lecturas a < 1 s de la anterior, inv.1         medido=      19,865  ref=      19,865  OK
+Lecturas a < 1 s de la anterior, inv.2         medido=         514  ref=         514  OK
+
+Filas con todas las variables clave NULL       medido=      55,658  ref=      55,658  OK
+  por inversor: {1: 1, 2: 55657}
+  por mes (solo meses con casos): {'2025-08': 2, '2026-05': 28028, '2026-06': 27628}
+
+NULL por columna clave (total / %):
+  pv1power          58,660   1.96 %
+  outw_a            58,521   1.96 %
+  linepowerw_a      58,062   1.94 %
+  battsoc           57,931   1.94 %
+  battvolt          58,141   1.94 %
+
+Valores fuera de rango físico (conteo):
+  battsoc fuera de 0-100              0
+  pv1power < 0 o > 8000               0
+  outw_a < 0 o > 8000                 0
+  linepowerw_a > 8000                 0
+  battvolt fuera de 0-60              0
+linepowerw_a negativo                          medido=           9  ref=           9  OK
+  mínimo de linepowerw_a: -146.0 W
+
+outw_a > 2500 W                                medido=          53  ref=          53  OK
+Regla R4: |outw_a - outsumw| > 1500 -> 62 lecturas (por inversor: {1: 0, 2: 62})
+
+battvolt=0 y linevolta=0 simultáneos           medido=           3  ref=           3  OK
+
+==============================================================================
+5. RED EN 0 V (evento operativo, NO dato inválido)
+==============================================================================
+Filas con linevolta = 0                        medido=     342,593  ref=     342,593  OK
+  inversor 1: filas con 0 V = 284,039; primera = 2026-05-03 07:50:51 UTC; última con red > 0 V = 2026-05-12 10:23:26 UTC
+      tras la última lectura con red: 225,490 filas, de las cuales 225,490 con 0 V
+      carga media con red en 0 V: 143 W; PV medio: 189 W; linepowerw_a medio: 0.0 W
+  inversor 2: filas con 0 V = 58,554; primera = 2026-05-03 07:50:51 UTC; última con red > 0 V = 2026-05-12 10:23:26 UTC
+      tras la última lectura con red: 55,664 filas, de las cuales 7 con 0 V
+      carga media con red en 0 V: 0 W; PV medio: 0 W; linepowerw_a medio: 0.0 W
+
+SoC mínimo por mes e inversor (%):
+inverter     1     2
+mes_utc             
+2025-07   48.0  22.0
+2025-08   42.0  58.0
+2025-09   57.0  37.0
+2025-10   53.0  49.0
+2025-11   71.0  46.0
+2025-12   87.0  35.0
+2026-01   79.0  10.0
+2026-02   83.0  10.0
+2026-03   77.0  10.0
+2026-04   60.0  10.0
+2026-05    6.0  87.0
+2026-06    6.0  87.0
+2026-07   60.0   NaN
+
+==============================================================================
+6. CONTEXTO (JSON)
+==============================================================================
+Registros de contexto                          medido=      25,178  ref=      25,178  OK
+JSON inválido o no objeto: 0
+
+Claves del JSON (frecuencia):
+  source                        25,178
+  inverter                      25,136
+  device                        25,125
+  context_type                  25,117
+  textual_description           14,990
+  task_type                     14,929
+  llm_estimated_task_effort     14,929
+  command                       11,974
+  library                       11,974
+  directory                     11,974
+  task_files                    11,974
+  cpu_cores_active              11,974
+  summary                       10,188
+  windows_event                  6,271
+  source_version                 3,713
+  model                          2,955
+  optim                          2,955
+  epochs                         2,955
+  dataset                        2,955
+  batch_size                     2,955
+  model_params                   2,955
+  source_table                   2,367
+  metrics                        2,224
+  sample_count                   2,224
+  active_minutes                 2,224
+  threshold_description          2,224
+  local_date                     1,328
+  latitude                         996
+  longitude                        996
+  method                           995
+  zenith_degrees                   995
+  sunrise_local                    664
+  sunset_local                     663
+  timezone                         334
+  weekday                          333
+  day_type                         333
+  weekday_name                     333
+  civil_dawn_local                 332
+  civil_dusk_local                 331
+  project                          209
+  metadata                         209
+  command_families                 208
+  example_commands_redacted        208
+  gap_seconds                      141
+  next_sample_local                141
+  threshold_seconds                141
+  previous_sample_local            141
+  privacy_note                      62
+  row_count                         14
+  table_name                        12
+  last_read_local                   12
+  first_read_local                  12
+  original_source                    5
+  field_group                        2
+  sentinel_value                     2
+  sentinel_like_count                2
+  sentinel_like_fraction             2
+  activity_types                     1
+  command_hints_redacted             1
+  coordinate_source                  1
+
+Valores de source:
+  workstation2_log               8,902
+  windows_event_log              6,271
+  workstation1_log               6,028
+  derived_context_pipeline       3,708
+  wsl_bash_history                 204
+  manual entry                      60
+  manual_workload_entry              5
+
+Valores de task_type:
+  compilation, CPU load         11,974
+  SIN_VALOR                     10,249
+  CNN fitting, GPU load          2,955
+
+inverter dentro del JSON:
+  1                             24,029
+  2                              1,107
+  ausente                           42
+
+context_type (top 40):
+  cpu_compilation_workload                    11,974
+  gpu_cnn_training_workload                    2,955
+  windows_update_maintenance_window            2,438
+  battery_charging                             1,058
+  wsl_virtualization_network_activity          1,021
+  battery_discharging                            659
+  virtualized_disk_io_summary                    647
+  pv_generation_active                           443
+  calendar_day                                   333
+  solar_civil_twilight_morning                   332
+  solar_daylight                                 332
+  solar_civil_twilight_evening                   331
+  interactive_or_remote_logon                    329
+  remote_access_or_ssh_activity                  286
+  system_time_adjustment                         234
+  storage_health_or_error_window                 228
+  remote_desktop_disconnect                      205
+  remote_desktop_reconnect                       197
+  power_transition                               164
+  data_gap                                       141
+  windows_update_activity                        119
+  system_boot_eventlog_started                    87
+  remote_desktop_logon                            66
+  SIN_TIPO                                        61
+  scheduled_reboot_or_shutdown                    60
+  system_shutdown_eventlog_stopped                57
+  interactive_development_window                  57
+  grid_unavailable_or_islanded                    56
+  remote_desktop_logoff                           39
+  unexpected_shutdown                             29
+  repository_activity                             28
+  compiler_invocation_burst                       25
+  winlogon_issue                                  24
+  benchmark_or_profiling_activity                 22
+  build_or_test_activity                          21
+  service_failure_or_restart_window               19
+  system_monitoring_activity                      16
+  package_or_environment_setup                    13
+  system_stability_report                         13
+  data_coverage_summary                           12
+  ... total de tipos distintos: 56
+
+Duración (end - start):
+  instantáneos (end = start): 2,163
+  mediana: 4.1 min; p99: 24.0 h; máximo: 7,961 h
+  registros con start anterior al inicio de la telemetría: 214
+
+Contexto grid_unavailable_or_islanded          medido=          56  ref=          56  OK
+  primer start: 2025-07-12 15:36:00 UTC; último end: 2026-06-09 06:19:00 UTC
+  por inversor: {1: 28, 2: 28}
+  -> contrastar con la primera fila con linevolta = 0 (sección 5) y documentar la conclusión.
+
+==============================================================================
+FIN: las líneas con 'REVISAR' indican diferencias frente a las cifras de referencia
+==============================================================================
