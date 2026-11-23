@@ -1,0 +1,24 @@
+# Configuración NO sensible. Se inyecta como variables de entorno (no está dentro de las imágenes).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opencem-config
+  namespace: opencem
+data:
+  # --- conexión (el host es el nombre del Service, no una IP)
+  PG_HOST: "postgres"
+  PG_PORT: "5432"
+  PG_DB: "opencem"
+  # --- ETL
+  SQLITE_PATH: "/data/opencem-v1.0.0.sqlite"
+  BIN_MINUTOS: "15"
+  TZ_LOCAL: "Asia/Shanghai"
+  UMBRAL_SPIKE_W: "1500"
+  POTENCIA_MAX_W: "8000"
+  GAP_MAX_SEG: "60"
+  # --- simulador y alertas (se usan en la Fase 5)
+  SIM_MODO: "normal"
+  SIM_TZ: "Asia/Shanghai"
+  SIM_PV_PICO_W: "2000"
+  SOC_ALERTA_PCT: "20"
+  MINUTOS_SIN_DATO: "3"

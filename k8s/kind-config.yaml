@@ -1,0 +1,17 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30543     # NodePort de PostgreSQL
+        hostPort: 5433
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30300     # NodePort de Grafana (Fase 5)
+        hostPort: 3000
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+    extraMounts:
+      - hostPath: "C:/taller6-bi/datos"
+        containerPath: /data/opencem
+        readOnly: true

@@ -1,0 +1,48 @@
+# Carga histórica: corre una vez, termina y deja evidencia en etl.* y en los logs.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: etl-historico
+  namespace: opencem
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: etl
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: etl
+          image: opencem-etl:1.0
+          imagePullPolicy: IfNotPresent     # la imagen se carga al clúster con "kind load"
+          envFrom:
+            - configMapRef:
+                name: opencem-config
+          env:
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: opencem-credenciales
+                  key: PG_USER
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencem-credenciales
+                  key: PG_PASSWORD
+          volumeMounts:
+            - name: bronze
+              mountPath: /data
+              readOnly: true
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1536Mi
+      volumes:
+        - name: bronze
+          hostPath:
+            path: /data/opencem          # carpeta del nodo de kind = datos/ del anfitrión (extraMounts)
+            type: Directory
