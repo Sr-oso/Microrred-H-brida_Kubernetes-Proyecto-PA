@@ -2,6 +2,7 @@
 *.sqlite
 *.zst
 *.zip
+*.kind-config.generated.yaml
 datos/
 __pycache__/
-.venv/
+.venv/.kind-config.generated.yaml
