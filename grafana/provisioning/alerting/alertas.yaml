@@ -1,0 +1,95 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: microrred-operacion
+    folder: Microrred
+    interval: 1m
+    rules:
+      - uid: alerta-soc-bajo
+        title: SoC bajo
+        condition: C
+        for: 5m
+        noDataState: OK
+        execErrState: Error
+        labels:
+          severidad: critica
+        annotations:
+          summary: "SoC por debajo de __SOC_ALERTA_PCT__ % durante 5 minutos (pre-alerta: el inversor alarma a 15 % y se detiene a 5 %)"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: opencem-pg
+            model:
+              refId: A
+              datasource:
+                type: grafana-postgresql-datasource
+                uid: opencem-pg
+              editorMode: code
+              format: time_series
+              rawQuery: true
+              rawSql: "SELECT ts_utc AS time, 'inversor_' || inversor_key AS metric, soc_pct AS value FROM gold.fact_lectura_reciente WHERE ts_utc >= now() - interval '10 minutes' ORDER BY 1"
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [__SOC_ALERTA_PCT__]
+      - uid: alerta-telemetria-ausente
+        title: Telemetría ausente
+        condition: C
+        for: 1m
+        noDataState: Alerting
+        execErrState: Error
+        labels:
+          severidad: alta
+        annotations:
+          summary: "Más de __MINUTOS_SIN_DATO__ minutos sin lecturas de un inversor (simulador escribe cada 1 min)"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: opencem-pg
+            model:
+              refId: A
+              datasource:
+                type: grafana-postgresql-datasource
+                uid: opencem-pg
+              editorMode: code
+              format: time_series
+              rawQuery: true
+              rawSql: "SELECT now() AS time, 'inversor_' || inversor_key AS metric, EXTRACT(EPOCH FROM (now() - MAX(ts_utc))) / 60.0 AS value FROM gold.fact_lectura_reciente WHERE origen = 'simulador' GROUP BY inversor_key"
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [__MINUTOS_SIN_DATO__]

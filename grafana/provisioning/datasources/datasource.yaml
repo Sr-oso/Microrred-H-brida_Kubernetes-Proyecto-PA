@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - name: OpenCEM PostgreSQL
+    uid: opencem-pg
+    type: grafana-postgresql-datasource
+    access: proxy
+    url: postgres:5432
+    user: opencem_ro
+    isDefault: true
+    jsonData:
+      database: opencem
+      sslmode: disable
+      postgresVersion: 1600
+    secureJsonData:
+      password: $PG_RO_PASSWORD

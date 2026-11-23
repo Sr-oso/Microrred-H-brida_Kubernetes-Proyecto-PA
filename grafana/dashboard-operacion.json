@@ -1,0 +1,173 @@
+{
+  "uid": "microrred-operacion",
+  "title": "Microrred — Operación",
+  "tags": ["opencem"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "inversor",
+        "label": "Inversor",
+        "type": "custom",
+        "query": "1,2",
+        "multi": true,
+        "includeAll": true,
+        "current": { "selected": true, "text": ["All"], "value": ["$__all"] }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Potencias (W)",
+      "gridPos": { "x": 0, "y": 0, "w": 16, "h": 9 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "fieldConfig": { "defaults": { "unit": "watt" }, "overrides": [] },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts_utc AS time, 'Inv ' || inversor_key || ' PV' AS metric, pv_w AS value FROM gold.fact_lectura_reciente WHERE $__timeFilter(ts_utc) AND inversor_key IN ($inversor) UNION ALL SELECT ts_utc, 'Inv ' || inversor_key || ' Carga', carga_w FROM gold.fact_lectura_reciente WHERE $__timeFilter(ts_utc) AND inversor_key IN ($inversor) UNION ALL SELECT ts_utc, 'Inv ' || inversor_key || ' Red', red_w FROM gold.fact_lectura_reciente WHERE $__timeFilter(ts_utc) AND inversor_key IN ($inversor) UNION ALL SELECT ts_utc, 'Inv ' || inversor_key || ' Bateria', bateria_w FROM gold.fact_lectura_reciente WHERE $__timeFilter(ts_utc) AND inversor_key IN ($inversor) ORDER BY 1"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Estado de carga SoC (%)",
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 9 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 20 } ] },
+          "custom": { "thresholdsStyle": { "mode": "line" } }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts_utc AS time, 'Inv ' || inversor_key AS metric, soc_pct AS value FROM gold.fact_lectura_reciente WHERE $__timeFilter(ts_utc) AND inversor_key IN ($inversor) ORDER BY 1"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "SoC actual",
+      "gridPos": { "x": 0, "y": 9, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "options": {
+        "reduceOptions": { "values": true, "calcs": ["lastNotNull"], "fields": "/^soc_pct$/" },
+        "textMode": "value_and_name",
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "decimals": 1,
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "orange", "value": 20 }, { "color": "green", "value": 40 } ] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT DISTINCT ON (inversor_key) 'Inversor ' || inversor_key AS inversor, soc_pct FROM gold.fact_lectura_reciente WHERE inversor_key IN ($inversor) ORDER BY inversor_key, ts_utc DESC"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Red presente",
+      "gridPos": { "x": 8, "y": 9, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "options": {
+        "reduceOptions": { "values": true, "calcs": ["lastNotNull"], "fields": "/^red$/" },
+        "textMode": "value_and_name",
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "Sí", "color": "green" }, "0": { "text": "No", "color": "red" } } }
+          ]
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT DISTINCT ON (inversor_key) 'Inversor ' || inversor_key AS inversor, CASE WHEN red_presente THEN 1 ELSE 0 END AS red FROM gold.fact_lectura_reciente WHERE inversor_key IN ($inversor) ORDER BY inversor_key, ts_utc DESC"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Minutos desde la última lectura",
+      "gridPos": { "x": 16, "y": 9, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "options": {
+        "reduceOptions": { "values": true, "calcs": ["lastNotNull"], "fields": "/^minutos$/" },
+        "textMode": "value_and_name",
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none", "decimals": 1,
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 3 } ] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT 'Inversor ' || inversor_key AS inversor, ROUND((EXTRACT(EPOCH FROM (now() - MAX(ts_utc))) / 60)::numeric, 1)::float AS minutos FROM gold.fact_lectura_reciente WHERE inversor_key IN ($inversor) GROUP BY inversor_key ORDER BY inversor_key"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "table",
+      "title": "Últimos eventos críticos",
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 9 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "opencem-pg" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT e.inicio_utc AS inicio, e.inversor_key AS inversor, t.context_type AS tipo, ROUND(e.duracion_min::numeric, 1) AS duracion_min FROM gold.fact_evento_operativo e JOIN gold.dim_tipo_evento t USING (tipo_evento_key) WHERE t.es_critico ORDER BY e.inicio_utc DESC LIMIT 15"
+        }
+      ]
+    }
+  ]
+}

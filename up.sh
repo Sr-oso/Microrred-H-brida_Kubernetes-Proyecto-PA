@@ -65,10 +65,21 @@ if ! kubectl wait --for=condition=complete job/etl-historico -n "$NS" --timeout=
 fi
 kubectl logs job/etl-historico -n "$NS" --tail=60
 
-echo "==> 7/7 Grafana y simulador (si existen sus manifiestos)"
-shopt -s nullglob
-for f in k8s/40-*.yaml k8s/50-*.yaml; do kubectl apply -f "$f"; done
-
-echo
+echo "==> 7/7 Grafana (provisioning) y simulador"
+kubectl create configmap grafana-datasource -n "$NS" \
+  --from-file=datasource.yaml=grafana/provisioning/datasources/datasource.yaml \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl create configmap grafana-dashboards-provider -n "$NS" \
+  --from-file=dashboards.yaml=grafana/provisioning/dashboards/dashboards.yaml \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl create configmap grafana-dashboard -n "$NS" \
+  --from-file=dashboard-operacion.json=grafana/dashboard-operacion.json \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl create configmap grafana-alerting-plantilla -n "$NS" \
+  --from-file=alertas.yaml=grafana/provisioning/alerting/alertas.yaml \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f k8s/40-grafana.yaml
+kubectl rollout status deployment/grafana -n "$NS" --timeout=300s
+kubectl apply -f k8s/50-simulador-cronjob.yaml
 echo "Listo. PostgreSQL desde el anfitrión: localhost:5433 (base opencem)."
 echo "Estado: kubectl get all -n $NS"

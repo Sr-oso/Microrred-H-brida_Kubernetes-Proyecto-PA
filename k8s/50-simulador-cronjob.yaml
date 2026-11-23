@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: simulador
+  namespace: opencem
+spec:
+  schedule: "* * * * *"               # cada minuto (mínimo de cron)
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 50
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        metadata:
+          labels:
+            app: simulador
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: simulador
+              image: opencem-simulador:1.0
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - configMapRef:
+                    name: opencem-config
+              env:
+                - name: PG_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: opencem-credenciales
+                      key: PG_USER
+                - name: PG_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: opencem-credenciales
+                      key: PG_PASSWORD
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
