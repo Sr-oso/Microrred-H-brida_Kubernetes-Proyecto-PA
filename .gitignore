@@ -6,3 +6,5 @@
 datos/
 __pycache__/
 .venv/.kind-config.generated.yaml
+powerbi/**/.pbi/cache.abf
+powerbi/**/.pbi/localSettings.json
